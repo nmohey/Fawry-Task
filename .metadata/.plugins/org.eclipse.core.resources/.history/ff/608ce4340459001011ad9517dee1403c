@@ -1,0 +1,22 @@
+package ecommerce;
+
+public class Ship extends Product implements Shippable {
+	double weight;
+	
+	public Ship(String name, double price, int quantity, double weight){
+		super(name, price, quantity);
+		this.weight = weight;
+	}
+
+	@Override
+	public String getName() {
+		return name;	
+	}
+
+	@Override
+	public double getWeight() {
+		return weight;
+	}
+	
+	
+}

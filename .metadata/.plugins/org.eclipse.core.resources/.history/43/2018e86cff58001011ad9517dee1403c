@@ -1,0 +1,32 @@
+package ecommerce;
+
+import java.util.ArrayList;
+
+public class Cart {
+	ArrayList<Items> cart = new ArrayList();
+	
+	public void add(Product product, int quantity){
+		if(product.quantity < quantity){
+			System.out.println("Only " + product.quantity + " " + product.name + "(s) available in stock.");
+		}
+		Items i = new Items(product, quantity);
+		cart.add(i);
+	}
+	
+	public void isExpire(){
+		Items item = cart.get(0);
+		if(item.product instanceof Expiry){
+			Expiry p = (Expiry)item.product;
+			System.out.println(p.expiry);
+		}
+		else if(item.product instanceof Ship){
+			Ship p = (Ship)item.product;
+			System.out.println(p.getWeight());
+		}
+		else{
+			Product p = (Product)item.product;
+			System.out.println("normal product");
+		}
+	}
+	
+}

@@ -1,0 +1,106 @@
+package ecommerce;
+
+import java.time.LocalDate;
+
+public class Main {
+	
+	public static boolean checkBalance(Customer customer, Cart c){
+		double total = 0;
+		for(int i=0; i<c.cart.size(); i++){
+			Items item = c.cart.get(i);
+			total += item.product.price*item.quantity;
+		}
+		if(total > customer.balance){
+			return false;
+		}
+		else{
+			return true;
+		}
+	}
+	
+	public static boolean checkExpired(Cart c){ 
+		for(int i=0; i<c.cart.size(); i++){
+			Items item = c.cart.get(i);
+			if(item.product instanceof Expiry_Ship){
+				Expiry_Ship p = (Expiry_Ship)item.product;
+				if((p.expiry).isBefore(LocalDate.now())){
+					return true;
+				}
+			}
+			else if(item.product instanceof Expiry){
+				Expiry p = (Expiry)item.product;
+				if((p.expiry).isBefore(LocalDate.now())){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public static boolean checkinStock(Cart c){ 
+		for(int i=0; i<c.cart.size(); i++){
+			Items item = c.cart.get(i);
+			if((item.product).quantity < item.quantity){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public static void checkout(Customer customer, Cart c){
+		if(c.cart.size() == 0){
+			System.out.println("Cart is Empty!");
+		}
+		else{
+			if(!(checkBalance(customer, c))){
+				System.out.println("Insufficient Balance!");
+			}
+			else{
+				if(checkExpired(c)){
+					System.out.println("Product(s) in cart is expired.");
+				}
+				else{
+					if(!(checkinStock(c))){
+						System.out.println("Product(s) in cart is out of stock.");
+					}
+					else{
+						ShippingService.checkoutShipping(c);
+						
+						System.out.println("** Checkout receipt **");
+						double total = 0;
+						for(int i=0; i<c.cart.size(); i++){
+							Items item = c.cart.get(i);
+							Product p = item.product;
+							int q = item.quantity;
+							total += p.price*q;
+							System.out.println(q + "x " + p.name + "     " + p.price*q);
+						}
+						System.out.println("----------------------------------------");
+						System.out.println("Subtotal     " + total);
+						System.out.println("Shipping     30");
+						total += 30;
+						System.out.println("Amount     " + total);
+						customer.updateBalance(total);
+						System.out.println("Current Balance     " + customer.balance);
+					}
+				}
+			}
+		}
+	}
+
+	public static void main(String[] args){
+        Product cheese = new Expiry("Cheese", 100, 5, LocalDate.of(2025, 12, 31));
+        Product biscuits = new Ship("Biscuits", 150, 2, 0.7);
+        Product scratchCard = new Product("ScratchCard", 50, 3) {}; // anonymous class
+
+        Customer customer = new Customer("Nada", 500);
+        Cart cart = new Cart();
+
+        cart.add(cheese, 2);
+        cart.add(biscuits, 1);
+        cart.add(scratchCard, 1);
+
+        checkout(customer, cart);
+	}
+	
+}

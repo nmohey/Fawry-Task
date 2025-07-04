@@ -1,0 +1,23 @@
+package ecommerce;
+
+public class ShippingService {
+	public static void checkoutShipping(Cart c){
+		System.out.println("** Shipping notice **");
+		double totalWeight = 0;
+		for(int i=0; i<c.cart.size(); i++){
+			Items item = c.cart.get(i);
+			if(item.product instanceof Expiry_Ship){
+				Expiry_Ship p = (Expiry_Ship)item.product;
+				totalWeight += p.getWeight();
+				System.out.println(item.quantity + "x " + p.getName() + "     " + p.getWeight() + "g");
+			}
+			else if(item.product instanceof Ship){
+				Ship p = (Ship)item.product;
+				totalWeight += p.getWeight();
+				System.out.println(item.quantity + "x " + p.getName() + "     " + p.getWeight() + "g");
+			}
+		}
+		System.out.println("Total package weight " + totalWeight + "g");
+		System.out.println();
+	}
+}

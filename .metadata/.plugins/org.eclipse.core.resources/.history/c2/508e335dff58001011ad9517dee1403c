@@ -1,0 +1,9 @@
+package ecommerce;
+
+public class ShippingService {
+	public static void checkoutShipping(Cart c){
+		for(int i=0; i<c.cart.size(); i++){
+			Items item = c.cart.get(i);
+		}
+	}
+}
